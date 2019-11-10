@@ -9,17 +9,17 @@ Usage:
 """
 import argparse
 import pickle
-import sys
 
 import numpy as np
 from keras.datasets import mnist
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-sys.path.insert(0, "../lib")
+from lib.gcforest.gcforest import GCForest
+from lib.gcforest.utils.config_utils import load_json
 
-from gcforest.gcforest import GCForest
-from gcforest.utils.config_utils import load_json
+
+# sys.path.insert(0, "../lib")
 
 
 def parse_args():
