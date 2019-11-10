@@ -8,13 +8,15 @@ Usage:
         python examples/demo_mnist.py --model examples/demo_mnist-ca.json
 """
 import argparse
-import numpy as np
-import sys
-from keras.datasets import mnist
 import pickle
+import sys
+
+import numpy as np
+from keras.datasets import mnist
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-sys.path.insert(0, "lib")
+
+sys.path.insert(0, "../lib")
 
 from gcforest.gcforest import GCForest
 from gcforest.utils.config_utils import load_json
@@ -36,10 +38,12 @@ def get_toy_config():
     ca_config["n_classes"] = 10
     ca_config["estimators"] = []
     ca_config["estimators"].append(
-            {"n_folds": 5, "type": "XGBClassifier", "n_estimators": 10, "max_depth": 5,
-             "objective": "multi:softprob", "silent": True, "nthread": -1, "learning_rate": 0.1} )
-    ca_config["estimators"].append({"n_folds": 5, "type": "RandomForestClassifier", "n_estimators": 10, "max_depth": None, "n_jobs": -1})
-    ca_config["estimators"].append({"n_folds": 5, "type": "ExtraTreesClassifier", "n_estimators": 10, "max_depth": None, "n_jobs": -1})
+        {"n_folds": 5, "type": "XGBClassifier", "n_estimators": 10, "max_depth": 5,
+         "objective": "multi:softprob", "silent": True, "nthread": -1, "learning_rate": 0.1})
+    ca_config["estimators"].append(
+        {"n_folds": 5, "type": "RandomForestClassifier", "n_estimators": 10, "max_depth": None, "n_jobs": -1})
+    ca_config["estimators"].append(
+        {"n_folds": 5, "type": "ExtraTreesClassifier", "n_estimators": 10, "max_depth": None, "n_jobs": -1})
     ca_config["estimators"].append({"n_folds": 5, "type": "LogisticRegression"})
     config["cascade"] = ca_config
     return config
@@ -62,7 +66,6 @@ if __name__ == "__main__":
     X_train = X_train[:, np.newaxis, :, :]
     X_test = X_test[:, np.newaxis, :, :]
 
-
     X_train_enc = gc.fit_transform(X_train, y_train)
     # X_enc is the concatenated predict_proba result of each estimators of the last layer of the GCForest model
     # X_enc.shape =
@@ -72,7 +75,7 @@ if __name__ == "__main__":
     # X_train_enc, X_test_enc = gc.fit_transform(X_train, y_train, X_test=X_test, y_test=y_test)
     # WARNING: if you set gc.set_keep_model_in_mem(True), you would have to use
     # gc.fit_transform(X_train, y_train, X_test=X_test, y_test=y_test) to evaluate your model.
-    
+
     y_pred = gc.predict(X_test)
     acc = accuracy_score(y_test, y_pred)
     print("Test Accuracy of GcForest = {:.2f} %".format(acc * 100))
